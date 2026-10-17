@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Power Electronics — Week 1 Quiz (First Half)</title>
+<style>
+:root{--navy:#102b46;--blue:#1769aa;--light:#f3f7fb;--green:#16794b;--red:#b42318;--border:#d8e2ec}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--light);color:#172b3a;line-height:1.5}
+header{background:linear-gradient(135deg,#102b46,#1769aa);color:white;padding:28px 18px}.wrap{max-width:850px;margin:auto}.eyebrow{font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;opacity:.85}
+h1{font-size:clamp(1.6rem,4vw,2.3rem);margin:8px 0}header p{margin:5px 0;opacity:.9}main{max-width:850px;margin:22px auto;padding:0 14px 35px}
+.panel,.question,.result{background:white;border:1px solid var(--border);border-radius:15px;padding:20px;margin-bottom:16px;box-shadow:0 3px 12px #102b4610}
+.field{display:flex;flex-direction:column;gap:6px;margin:10px 0 16px}label{font-weight:700}input[type=text]{font:inherit;padding:12px;border:1px solid #b8c8d8;border-radius:9px;width:100%}
+.topline{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.pill{background:#e6f1fb;color:#174c78;padding:5px 10px;border-radius:99px;font-size:.85rem;font-weight:700}
+.timer{font-size:1.2rem;font-weight:800;color:#174c78;background:#e6f1fb;border-radius:10px;padding:8px 12px;font-variant-numeric:tabular-nums}.timer.warning{background:#fff0e8;color:#b42318}
+.progress{height:8px;background:#e6edf4;border-radius:99px;overflow:hidden;margin:12px 0 20px}.bar{height:100%;width:0;background:#2580c3;transition:width .2s}
+.qtitle{font-size:1.08rem;font-weight:700;margin:0 0 13px}.option{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--border);padding:12px;border-radius:10px;margin:8px 0;cursor:pointer}
+.option:hover{background:#f4f9fd;border-color:#8cb9dc}.option input{margin-top:5px;accent-color:var(--blue)}.option:has(input:checked){background:#edf6ff;border-color:var(--blue)}
+button{font:inherit;font-weight:700;border:0;border-radius:10px;padding:12px 18px;cursor:pointer}.primary{background:var(--blue);color:white}.secondary{background:#e8eef4;color:#18374f}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.muted{color:#5b6e7d;font-size:.92rem}.hidden{display:none!important}.score{font-size:2.4rem;font-weight:800;color:var(--navy)}
+.review-item{border-top:1px solid var(--border);padding:14px 0}.correct{color:var(--green);font-weight:700}.incorrect{color:var(--red);font-weight:700}.explanation{color:#536675;margin:6px 0 0}.notice{background:#fff8e8;border:1px solid #f0d69b;border-radius:10px;padding:12px;font-size:.92rem}
+@media(max-width:560px){header{padding:22px 15px}.panel,.question,.result{padding:15px}.actions button{width:100%}}
+@media print{header{background:#fff;color:#000;padding:10px}body{background:white}.panel,.question{box-shadow:none}.actions{display:none}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+<div class="eyebrow">Prince Al-Hussein Bin Abdullah II Academy of Civil Protection</div>
+<h1>Power Electronics — Week 1 Quiz</h1>
+<p>First Half of the Slides · Slides 1–14 · 10 Questions · English</p>
+<p>Instructor: Eng. Yazeed Suleiman Rbeihat</p>
+</div></header>
+<main>
+<section class="panel" id="intro">
+<h2>Instructions</h2>
+<p>This quiz covers only the first half of Week 1 (slides 1–14): introduction, objectives, advantages and disadvantages, converter classification, and applications. Power devices and diode topics from the second half are not included.</p>
+<p>You have <strong>10 minutes</strong> to answer 10 multiple-choice questions. Each question is worth one mark. The quiz submits automatically when the timer reaches zero.</p>
+<div class="field"><label for="studentName">Full name (required)</label><input id="studentName" type="text" maxlength="100" required autocomplete="name" placeholder="Enter your full name"></div>
+<div class="notice"><strong>Important:</strong> Enter your name before starting. Your name and result are sent to the instructor's results endpoint.</div>
+<div class="actions"><button class="primary" id="startBtn">Start 10-Minute Quiz</button></div>
+<p class="muted">Do not refresh or close the page during the quiz.</p>
+</section>
+<section id="quiz" class="hidden">
+<div class="panel"><div class="topline"><strong id="progressText">Question 1 of 10</strong><span class="pill" id="answeredText">0 of 10 answered</span><span class="timer" id="timer">10:00</span></div><div class="progress"><div class="bar" id="progressBar"></div></div></div>
+<div id="questionContainer"></div>
+<div class="actions"><button class="secondary" id="prevBtn">Previous</button><button class="primary" id="nextBtn">Next Question</button><button class="primary hidden" id="submitBtn">Submit Quiz</button></div>
+<p class="muted">Your quiz will submit automatically when time runs out.</p>
+</section>
+<section id="results" class="result hidden" aria-live="polite"></section>
+</main>
+<script>
+const RESULTS_ENDPOINT = "https://script.google.com/macros/s/AKfycbwpXpj_xxM-Kz0z5itSCJo6F60jO2LO1gClglEtkOyJZZ-ZHUL-jEtvt1nzANHmCCtEQQ/exec";
+const DURATION_SECONDS = 10 * 60;
+const questions = [{"q": "What is Power Electronics mainly concerned with?", "options": ["Generating mechanical power only", "Applying power semiconductor devices to control and convert electric power", "Measuring temperature in electrical systems", "Storing information in digital circuits"], "answer": 1, "explanation": "The slides define Power Electronics as applying power semiconductor devices for control and conversion of electric power."}, {"q": "In a power electronics system, power electronic converters are described as:", "options": ["The heart of the system", "The electrical load only", "A type of battery", "A mechanical transmission"], "answer": 0, "explanation": "The slides describe power electronic converters as the heart of a power electronics system."}, {"q": "Which components or elements are mentioned as being used to control electrical energy?", "options": ["Only transformers and fuses", "Electronic switches, capacitors, magnetics, and control systems", "Only motors and gears", "Only resistors and lamps"], "answer": 1, "explanation": "The introduction slide lists electronic switches, capacitors, magnetics, and control systems."}, {"q": "What is a main goal of a power electronic system?", "options": ["Convert electrical energy from one form to another", "Increase the weight of equipment", "Always maximize cost", "Eliminate the need for a load"], "answer": 0, "explanation": "The stated goal is to convert electrical energy from one form to another, from source to load."}, {"q": "Which combination matches the design goals listed in the slides?", "options": ["Low efficiency and large size", "Highest efficiency and reliability, with low cost, size, and weight", "Maximum weight and maintenance", "Lowest availability and highest cost"], "answer": 1, "explanation": "The slides list high efficiency, availability, reliability, and low cost, size, and weight."}, {"q": "Which is listed as an advantage of power electronic systems?", "options": ["High reliability", "High maintenance due to moving parts", "Always low efficiency", "Slow dynamic response compared with electromechanical converters"], "answer": 0, "explanation": "High reliability is listed among the advantages, along with long life, less maintenance, flexibility, fast response, and compact size."}, {"q": "Which issue is listed as a disadvantage of power electronics systems?", "options": ["They never generate harmonics", "They can generate harmonics in the supply and load circuits", "They always have moving parts", "They cannot control electrical energy"], "answer": 1, "explanation": "The slides note that power electronics circuits can generate harmonics in the supply system and load circuit."}, {"q": "What is the objective of a power electronics circuit when matching a source and a load?", "options": ["Match the voltage and current requirements of the load to those of the source", "Make the source and load completely unrelated", "Convert all electrical energy into mechanical energy", "Increase current without considering voltage"], "answer": 0, "explanation": "The converter is intended to match the voltage and current requirements of the load to those of the source."}, {"q": "Which converter changes AC voltage into a fixed DC voltage?", "options": ["Inverter", "Diode rectifier", "DC chopper", "Static switch"], "answer": 1, "explanation": "The slides state that a diode rectifier converts AC voltage into a fixed DC voltage."}, {"q": "Which of the following is listed as a power electronics application?", "options": ["HVDC transmission", "Paper printing only", "Mechanical hand tools only", "Non-electrical filing systems"], "answer": 0, "explanation": "High-voltage DC transmission (HVDC) is listed under utility-system applications."}];
+let current=0,started=false,submitted=false,deadline=0,timerId=null;
+const answers={}; const $=id=>document.getElementById(id);
+function renderQuestion(){
+ const item=questions[current];$('progressText').textContent=`Question ${current+1} of ${questions.length}`;
+ $('answeredText').textContent=`${Object.keys(answers).length} of ${questions.length} answered`;
+ $('progressBar').style.width=`${Object.keys(answers).length/questions.length*100}%`;
+ $('questionContainer').innerHTML='';
+ const card=document.createElement('article');card.className='question';
+ const title=document.createElement('p');title.className='qtitle';title.textContent=`${current+1}. ${item.q}`;card.appendChild(title);
+ item.options.forEach((opt,i)=>{const label=document.createElement('label');label.className='option';const radio=document.createElement('input');radio.type='radio';radio.name='answer';radio.value=i;radio.checked=answers[current]===i;radio.addEventListener('change',()=>{answers[current]=i;renderQuestion()});const text=document.createElement('span');text.textContent=`${String.fromCharCode(65+i)}. ${opt}`;label.append(radio,text);card.appendChild(label);});
+ $('questionContainer').appendChild(card);$('prevBtn').disabled=current===0;$('prevBtn').style.opacity=current===0?'.5':'1';
+ $('nextBtn').classList.toggle('hidden',current===questions.length-1);$('submitBtn').classList.toggle('hidden',current!==questions.length-1);
+}
+function updateTimer(){if(submitted)return;const left=Math.max(0,Math.ceil((deadline-Date.now())/1000));$('timer').textContent=`${String(Math.floor(left/60)).padStart(2,'0')}:${String(left%60).padStart(2,'0')}`;$('timer').classList.toggle('warning',left<=60);if(left<=0){clearInterval(timerId);finishQuiz(true);}}
+$('startBtn').addEventListener('click',()=>{const name=$('studentName').value.trim();if(!name){alert('Please enter your full name before starting.');$('studentName').focus();return;}started=true;deadline=Date.now()+DURATION_SECONDS*1000;$('intro').classList.add('hidden');$('quiz').classList.remove('hidden');renderQuestion();updateTimer();timerId=setInterval(updateTimer,250);window.scrollTo({top:0,behavior:'smooth'});});
+$('prevBtn').addEventListener('click',()=>{if(current>0){current--;renderQuestion();}});
+$('nextBtn').addEventListener('click',()=>{if(current<questions.length-1){current++;renderQuestion();window.scrollTo({top:0,behavior:'smooth'});}});
+$('submitBtn').addEventListener('click',()=>{if(confirm('Are you sure you want to submit your quiz now?'))finishQuiz(false);});
+async function finishQuiz(autoSubmitted){
+ if(submitted||!started)return;submitted=true;clearInterval(timerId);
+ const score=questions.reduce((sum,q,i)=>sum+(answers[i]===q.answer?1:0),0);const name=$('studentName').value.trim();
+ const record={name,score,total:questions.length,percentage:Math.round(score/questions.length*100),autoSubmitted,submittedAt:new Date().toISOString(),answers:questions.map((q,i)=>({question:i+1,selected:answers[i]===undefined?"":q.options[answers[i]],correct:q.options[q.answer],isCorrect:answers[i]===q.answer}))};
+ let saveMessage='';
+ if(RESULTS_ENDPOINT.startsWith('https://script.google.com/')&&!RESULTS_ENDPOINT.includes('PASTE_YOUR')){try{await fetch(RESULTS_ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(record),keepalive:true});saveMessage='<p class="notice">Result sent to the instructor results endpoint. The browser cannot verify the spreadsheet write in no-cors mode.</p>';}catch(e){saveMessage='<p class="notice">Score calculated, but sending failed. Please contact your instructor.</p>';}}
+ else{saveMessage='<p class="notice">The results endpoint is not configured, so this result was not sent to a spreadsheet.</p>';}
+ $('quiz').classList.add('hidden');$('results').classList.remove('hidden');
+ let html=`<h2>${autoSubmitted?'Time is up — Quiz submitted':'Quiz submitted'}</h2><p><strong>Student:</strong> ${escapeHtml(name)}</p><div class="score">${score} / ${questions.length}</div><p><strong>${record.percentage}%</strong> correct</p><p>${autoSubmitted?'Submitted automatically when the 10-minute timer ended.':'Your answers have been submitted.'}</p>${saveMessage}<div class="actions"><button class="secondary" id="printBtn">Print Results</button></div><h3>Answer Review</h3>`;
+ questions.forEach((q,i)=>{const ok=answers[i]===q.answer;html+=`<div class="review-item"><div><strong>${i+1}. ${q.q}</strong></div><p class="${ok?'correct':'incorrect'}">${ok?'Correct':'Incorrect'} · Your answer: ${answers[i]===undefined?'Not answered':String.fromCharCode(65+answers[i])+'. '+q.options[answers[i]]}</p><p><strong>Correct answer:</strong> ${String.fromCharCode(65+q.answer)}. ${q.options[q.answer]}</p><p class="explanation">${q.explanation}</p></div>`;});
+ $('results').innerHTML=html;$('printBtn').addEventListener('click',()=>window.print());window.scrollTo({top:0,behavior:'smooth'});
+}
+function escapeHtml(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+</script></body></html>
